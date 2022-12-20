@@ -7,5 +7,9 @@ func FizzBuzz(num int) string {
 	if num == 2 {
 		return "2"
 	}
+	if num == 4 {
+		return "4"
+	}
+
 	return "1"
 }
