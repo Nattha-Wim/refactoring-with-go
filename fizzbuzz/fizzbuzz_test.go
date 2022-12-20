@@ -13,9 +13,20 @@ func TestFizzBuzz(t *testing.T) {
 	}
 }
 
-func TestINput2ShouldBe2(t *testing.T) {
+func TestInput2ShouldBe2(t *testing.T) {
 	want := "2"
 	input := 2
+
+	got := FizzBuzz(input)
+
+	if got != want {
+		t.Errorf("FizzBuzz(%d) = %q, want %q", input, got, want)
+	}
+}
+
+func TestInput3ShouldBeFizz(t *testing.T) {
+	want := "Fizz"
+	input := 3
 
 	got := FizzBuzz(input)
 
