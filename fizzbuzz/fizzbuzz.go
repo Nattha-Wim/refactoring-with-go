@@ -1,15 +1,11 @@
 package fizzbuzz
 
+import "fmt"
+
 func FizzBuzz(num int) string {
 	if num == 3 {
 		return "Fizz"
 	}
-	if num == 2 {
-		return "2"
-	}
-	if num == 4 {
-		return "4"
-	}
-
-	return "1"
+	// convert int to string
+	return fmt.Sprintf("%d", num)
 }
