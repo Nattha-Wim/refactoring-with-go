@@ -3,10 +3,13 @@ package fizzbuzz
 import "fmt"
 
 func FizzBuzz(num int) string {
-	if num == 3 || num == 6 || num == 9 {
+	if num%15 == 0 {
+		return "FizzBuzz"
+	}
+	if num%3 == 0 {
 		return "Fizz"
 	}
-	if num == 5 {
+	if num%5 == 0 {
 		return "Buzz"
 	}
 	// convert int to string
