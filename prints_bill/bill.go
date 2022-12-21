@@ -110,10 +110,10 @@ func statement(invoice Invoice, plays Plays) string {
 		TotalAmount:        totalAmountFor(invoice, plays),
 		TotalVolumeCredits: totalVolumeCreditsFor(invoice.Performances, plays),
 	}
-	return renderPainText(invoice, plays, bill)
+	return renderPainText(bill)
 }
 
-func renderPainText(invoice Invoice, plays Plays, bill Bill) string {
+func renderPainText(bill Bill) string {
 
 	result := fmt.Sprintf("Statement for %s\n", bill.Customer)
 
