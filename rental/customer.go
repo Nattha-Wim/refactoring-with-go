@@ -21,8 +21,7 @@ func (rcvr *Customer) Name() string {
 }
 
 func RegularCharge(r Rental) float64 {
-	result := 0.0
-	result += 2
+	result := 2.0
 	if r.DaysRented() > 2 {
 		result += float64(r.DaysRented()-2) * 1.5
 	}
@@ -35,26 +34,29 @@ func NewReleaseCharge(r Rental) float64 {
 	return result
 }
 
-func ChildrensCharge(r Rental) float64 {
-	result := 0.0
-	result += 1.5
-	if r.DaysRented() > 3 {
-		result += float64(r.DaysRented()-3) * 1.5
+func ChildrensCharge(daysRented int) float64 {
+
+	result := 1.5
+	if daysRented > 3 {
+		result += float64(daysRented-3) * 1.5
 	}
 	return result
 }
 
 func (r Rental) Charge() float64 { // Charge belong to Rental so we can convert Charge to Rental's methor
-	result := 0.0
+
 	switch r.Movie().PriceCode() {
 	case REGULAR:
 		return RegularCharge(r)
 	case NEW_RELEASE:
 		return NewReleaseCharge(r)
 	case CHILDRENS:
-		return ChildrensCharge(r)
+		return ChildrensCharge(r.DaysRented())
+	case 0:
+		return r.Movie().Charger.Charge(r.daysRented)
 	}
-	return result
+
+	return 0
 }
 
 func GetPoint(r Rental) int {
