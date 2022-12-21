@@ -13,50 +13,49 @@ func NewCustomer(name string) (rcvr Customer) {
 		rentals: []Rental{},
 	}
 }
-func (rcvr Customer) AddRental(arg Rental) {
-	rcvr.rentals = append(rcvr.rentals, arg)
+func (c Customer) AddRental(arg Rental) {
+	c.rentals = append(c.rentals, arg)
 }
-func (rcvr *Customer) Name() string {
-	return rcvr.name
-}
-
-func RegularCharge(r Rental) float64 {
-	result := 2.0
-	if r.DaysRented() > 2 {
-		result += float64(r.DaysRented()-2) * 1.5
-	}
-	return result
+func (c Customer) Name() string {
+	return c.name
 }
 
-func NewReleaseCharge(r Rental) float64 {
-	result := 0.0
-	result += float64(r.DaysRented()) * 3.0
-	return result
-}
+// func RegularCharge(daysRented int) float64 {
+// 	result := 2.0
+// 	if daysRented > 2 {
+// 		result += float64(daysRented-2) * 1.5
+// 	}
+// 	return result
+// }
 
-func ChildrensCharge(daysRented int) float64 {
+// func NewReleaseCharge(daysRented int) float64 {
+// 	result := 0.0
+// 	result += float64(daysRented) * 3.0
+// 	return result
+// }
 
-	result := 1.5
-	if daysRented > 3 {
-		result += float64(daysRented-3) * 1.5
-	}
-	return result
-}
+// func ChildrensCharge(daysRented int) float64 {
+
+// 	result := 1.5
+// 	if daysRented > 3 {
+// 		result += float64(daysRented-3) * 1.5
+// 	}
+// 	return result
+// }
 
 func (r Rental) Charge() float64 { // Charge belong to Rental so we can convert Charge to Rental's methor
 
-	switch r.Movie().PriceCode() {
-	case REGULAR:
-		return r.Movie().Charger.Charge(r.daysRented)
-	case NEW_RELEASE:
-		return r.Movie().Charger.Charge(r.daysRented)
-	case CHILDRENS:
-		return r.Movie().Charger.Charge(r.daysRented)
-	case 0:
-		return r.Movie().Charger.Charge(r.daysRented)
-	}
-
-	return 0
+	return r.Movie().Price.Charge(r.daysRented)
+	// switch r.Movie().PriceCode() {
+	// case REGULAR:
+	// 	return r.Movie().Charger.Charge(r.daysRented)
+	// case NEW_RELEASE:
+	// 	return r.Movie().Charger.Charge(r.daysRented)
+	// case CHILDRENS:
+	// 	return r.Movie().Charger.Charge(r.daysRented)
+	// case 0:
+	// 	return r.Movie().Charger.Charge(r.daysRented)
+	// }
 }
 
 func GetPoint(r Rental) int {
