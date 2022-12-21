@@ -82,7 +82,7 @@ type Movie struct {
 	price     Pricer
 }
 
-func NewM(title string, charge Pricer) Movie {
+func NewMovie(title string, charge Pricer) Movie {
 	return Movie{
 		title:     title,
 		priceCode: charge.PriceCode(),
@@ -90,12 +90,12 @@ func NewM(title string, charge Pricer) Movie {
 	}
 }
 
-func NewMovie(title string, priceCode int) (rcvr Movie) {
-	return Movie{
-		title:     title,
-		priceCode: priceCode,
-	}
-}
+//	func NewMovie(title string, priceCode int) (rcvr Movie) {
+//		return Movie{
+//			title:     title,
+//			priceCode: priceCode,
+//		}
+//	}
 func (m Movie) PriceCode() int {
 	return m.priceCode
 }
