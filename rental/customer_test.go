@@ -13,8 +13,8 @@ func TestCustomer(t *testing.T) {
 	customer := NewCustomer("AnuchitO")
 	customer.rentals = append(customer.rentals, NewRental(NewM("Kingsman", CreateRegulars()), 2))
 	customer.rentals = append(customer.rentals, NewRental(NewM("Iron Man", CreateRegulars()), 3))
-	customer.rentals = append(customer.rentals, NewRental(NewMovie("The Avengers", NEW_RELEASE), 1))
-	customer.rentals = append(customer.rentals, NewRental(NewMovie("Shang-chi", NEW_RELEASE), 2))
+	customer.rentals = append(customer.rentals, NewRental(NewM("The Avengers", CreateNewReleases()), 1))
+	customer.rentals = append(customer.rentals, NewRental(NewM("Shang-chi", CreateNewReleases()), 2))
 	customer.rentals = append(customer.rentals, NewRental(NewM("Ant-Man", CreateChildren()), 3))
 	customer.rentals = append(customer.rentals, NewRental(NewM("The Batman", CreateChildren()), 4))
 

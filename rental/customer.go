@@ -47,11 +47,11 @@ func (r Rental) Charge() float64 { // Charge belong to Rental so we can convert 
 
 	switch r.Movie().PriceCode() {
 	case REGULAR:
-		return RegularCharge(r)
+		return r.Movie().Charger.Charge(r.daysRented)
 	case NEW_RELEASE:
-		return NewReleaseCharge(r)
+		return r.Movie().Charger.Charge(r.daysRented)
 	case CHILDRENS:
-		return ChildrensCharge(r.DaysRented())
+		return r.Movie().Charger.Charge(r.daysRented)
 	case 0:
 		return r.Movie().Charger.Charge(r.daysRented)
 	}

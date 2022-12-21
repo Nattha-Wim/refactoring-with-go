@@ -56,6 +56,26 @@ func CreateRegulars() Regulars {
 	}
 }
 
+type NewReleases struct {
+	priceCode int
+}
+
+func (r NewReleases) Charge(daysRented int) float64 {
+	result := 0.0
+	result += float64(daysRented) * 3.0
+	return result
+}
+
+func (r NewReleases) PriceCode() int {
+	return r.priceCode
+}
+
+func CreateNewReleases() NewReleases {
+	return NewReleases{
+		priceCode: NEW_RELEASE,
+	}
+}
+
 type Movie struct {
 	title     string
 	priceCode int
