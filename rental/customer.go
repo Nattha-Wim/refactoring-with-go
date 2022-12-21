@@ -20,36 +20,43 @@ func (rcvr *Customer) Name() string {
 	return rcvr.name
 }
 
-func Charge(each Rental) float64 {
+func (r Rental) Charge() float64 { // Charge belong to Rental so we can convert Charge to Rental's methor
 	result := 0.0
-	switch each.Movie().PriceCode() {
+	switch r.Movie().PriceCode() {
 	case REGULAR:
 		result += 2
-		if each.DaysRented() > 2 {
-			result += float64(each.DaysRented()-2) * 1.5
+		if r.DaysRented() > 2 {
+			result += float64(r.DaysRented()-2) * 1.5
 		}
 	case NEW_RELEASE:
-		result += float64(each.DaysRented()) * 3.0
+		result += float64(r.DaysRented()) * 3.0
 	case CHILDRENS:
 		result += 1.5
-		if each.DaysRented() > 3 {
-			result += float64(each.DaysRented()-3) * 1.5
+		if r.DaysRented() > 3 {
+			result += float64(r.DaysRented()-3) * 1.5
 		}
 	}
 	return result
 }
 
+func GetPoint(r Rental) int {
+	frequentRenterPoints := 0
+	frequentRenterPoints++
+	if r.Movie().PriceCode() == NEW_RELEASE && r.DaysRented() > 1 {
+		frequentRenterPoints++
+	}
+	return frequentRenterPoints
+}
+
 func (rcvr Customer) Statement() string {
 	totalAmount := 0.0
 	frequentRenterPoints := 0
-	result := fmt.Sprintf("%v%v%v", "Rental Record for ", rcvr.Name(), "\n")
+	result := fmt.Sprintf("Rental Record for %v\n", rcvr.Name())
 	for _, r := range rcvr.rentals {
-		thisAmount := Charge(r)
+		thisAmount := r.Charge()
 
-		frequentRenterPoints++
-		if r.Movie().PriceCode() == NEW_RELEASE && r.DaysRented() > 1 {
-			frequentRenterPoints++
-		}
+		frequentRenterPoints += GetPoint(r)
+
 		result += fmt.Sprintf("\t%v\t%.1f\n", r.Movie().Title(), thisAmount)
 		totalAmount += thisAmount
 	}

@@ -12,9 +12,9 @@ func NewRental(movie Movie, daysRented int) (rcvr Rental) {
 	}
 
 }
-func (rcvr *Rental) DaysRented() int {
+func (rcvr Rental) DaysRented() int {
 	return rcvr.daysRented
 }
-func (rcvr *Rental) Movie() Movie {
+func (rcvr Rental) Movie() Movie {
 	return rcvr.movie
 }
