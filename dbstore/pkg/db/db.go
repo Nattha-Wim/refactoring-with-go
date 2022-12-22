@@ -18,6 +18,11 @@ type DB struct {
 	offsetMap map[string]int64
 }
 
+// input id File
+func New(f *os.File) *DB {
+	return &DB{f: f, offsetMap: make(map[string]int64)}
+}
+
 // NewDb return a new intialized Db
 func NewDB(filename string) *DB {
 
