@@ -13,11 +13,22 @@ import (
 )
 
 // Db type
-type Db struct {
-	filename  string
-	fileWrite *os.File
-	fileRead  *os.File
+type DB struct {
+	f         io.ReadWriteSeeker
 	offsetMap map[string]int64
+}
+
+// NewDb return a new intialized Db
+func NewDB(filename string) *DB {
+
+	f, err := os.OpenFile(filename, os.O_CREATE|os.O_RDWR, 0644)
+	if err != nil {
+		log.Fatalf("error file opening for write")
+	}
+
+	offsetMap := make(map[string]int64)
+	db := &DB{f: f, offsetMap: offsetMap}
+	return db
 }
 
 func writeBinaryBufferLength(data []byte) *bytes.Buffer {
@@ -30,13 +41,13 @@ func writeBinaryBufferLength(data []byte) *bytes.Buffer {
 	return buf
 }
 
-func (db *Db) pbAppend(entity *pb.Entity) (int64, error) {
+func (db *DB) pbAppend(entity *pb.Entity) (int64, error) {
 	entityBytes, err := proto.Marshal(entity)
 	if err != nil {
 		return 0, fmt.Errorf("pb marshall error %v", err)
 	}
 	byteBuffer := writeBinaryBufferLength(entityBytes)
-	offset, err := db.fileWrite.Seek(0, 2)
+	offset, err := db.f.Seek(0, 2)
 	if err != nil {
 		return 0, fmt.Errorf("file seek error %v", err)
 	}
@@ -44,7 +55,7 @@ func (db *Db) pbAppend(entity *pb.Entity) (int64, error) {
 	if err != nil {
 		return 0, fmt.Errorf("error writing byte buffer %v", err)
 	}
-	_, err = db.fileWrite.Write(byteBuffer.Bytes())
+	_, err = db.f.Write(byteBuffer.Bytes())
 	if err != nil {
 		return 0, fmt.Errorf("entity size file write error %v", err)
 	}
@@ -55,7 +66,7 @@ func (db *Db) pbAppend(entity *pb.Entity) (int64, error) {
 }
 
 // Set a key-value pair in the database
-func (db *Db) Set(entity *pb.Entity) error {
+func (db *DB) Set(entity *pb.Entity) error {
 	offset, err := db.pbAppend(entity)
 	if err != nil {
 		return err
@@ -65,7 +76,7 @@ func (db *Db) Set(entity *pb.Entity) error {
 }
 
 // Delete an entry for given key from database
-func (db *Db) Delete(key string) error {
+func (db *DB) Delete(key string) error {
 	entity := &pb.Entity{Tombstone: true, Key: key}
 	offset, err := db.pbAppend(entity)
 	if err != nil {
@@ -76,12 +87,12 @@ func (db *Db) Delete(key string) error {
 }
 
 // Get a key-value pair from the database
-func (db *Db) Get(key string) (*pb.Entity, error) {
+func (db *DB) Get(key string) (*pb.Entity, error) {
 	offset, ok := db.offsetMap[key]
 	if !ok {
 		return nil, nil
 	}
-	_, err := db.fileRead.Seek(offset, 0)
+	_, err := db.f.Seek(offset, 0)
 	if err != nil {
 		return nil, fmt.Errorf("file seek error %v", err)
 	}
@@ -99,10 +110,10 @@ func (db *Db) Get(key string) (*pb.Entity, error) {
 	return entity, nil
 }
 
-func (db *Db) readSize() (uint64, error) {
+func (db *DB) readSize() (uint64, error) {
 	intsize := 8
 	byteBuffer := make([]byte, intsize)
-	_, err := db.fileRead.Read(byteBuffer)
+	_, err := db.f.Read(byteBuffer)
 	if err != nil {
 		return 0, err
 	}
@@ -116,10 +127,10 @@ func (db *Db) readSize() (uint64, error) {
 }
 
 // Recover from a crash and populate in-memory hashmap from existing file
-func (db *Db) Recover() error {
+func (db *DB) Recover() error {
 	// start reading file at beginning
 	offset := int64(0)
-	_, err := db.fileRead.Seek(offset, 0)
+	_, err := db.f.Seek(offset, 0)
 	if err != nil {
 		return fmt.Errorf("file seek error %v", err)
 	}
@@ -145,9 +156,9 @@ func (db *Db) Recover() error {
 	return nil
 }
 
-func (db *Db) readPbData(lengthOf uint64) (*pb.Entity, error) {
+func (db *DB) readPbData(lengthOf uint64) (*pb.Entity, error) {
 	dataBuf := make([]byte, lengthOf)
-	_, err := db.fileRead.Read(dataBuf)
+	_, err := db.f.Read(dataBuf)
 	if err != nil {
 		return nil, err
 	}
@@ -159,19 +170,4 @@ func (db *Db) readPbData(lengthOf uint64) (*pb.Entity, error) {
 		return nil, fmt.Errorf("proto unmarshal error %v", err)
 	}
 	return entity, nil
-}
-
-// NewDb return a new intialized Db
-func NewDb(filename string) *Db {
-	fileWrite, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Fatalf("error file opening for write")
-	}
-	fileRead, err := os.OpenFile(filename, os.O_RDONLY, 0644)
-	if err != nil {
-		log.Fatalf("error file opening for read")
-	}
-	offsetMap := make(map[string]int64)
-	db := &Db{filename: filename, fileWrite: fileWrite, fileRead: fileRead, offsetMap: offsetMap}
-	return db
 }
