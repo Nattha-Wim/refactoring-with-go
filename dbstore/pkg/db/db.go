@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"os"
 
 	"github.com/anuchito/dbstore/pb"
 	"github.com/golang/protobuf/proto"
@@ -18,22 +17,9 @@ type DB struct {
 	offsetMap map[string]int64
 }
 
-// input id File
-func New(f *os.File) *DB {
+// input is any type
+func New(f io.ReadWriteSeeker) *DB {
 	return &DB{f: f, offsetMap: make(map[string]int64)}
-}
-
-// NewDb return a new intialized Db
-func NewDB(filename string) *DB {
-
-	f, err := os.OpenFile(filename, os.O_CREATE|os.O_RDWR, 0644)
-	if err != nil {
-		log.Fatalf("error file opening for write")
-	}
-
-	offsetMap := make(map[string]int64)
-	db := &DB{f: f, offsetMap: offsetMap}
-	return db
 }
 
 func writeBinaryBufferLength(data []byte) *bytes.Buffer {
@@ -176,3 +162,16 @@ func (db *DB) readPbData(lengthOf uint64) (*pb.Entity, error) {
 	}
 	return entity, nil
 }
+
+// // NewDb return a new intialized Db
+// func NewDB(filename string) *DB {
+
+// 	f, err := os.OpenFile(filename, os.O_CREATE|os.O_RDWR, 0644)
+// 	if err != nil {
+// 		log.Fatalf("error file opening for write")
+// 	}
+
+// 	offsetMap := make(map[string]int64)
+// 	db := &DB{f: f, offsetMap: offsetMap}
+// 	return db
+// }

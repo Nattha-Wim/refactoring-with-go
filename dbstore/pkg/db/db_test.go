@@ -1,25 +1,15 @@
 package db
 
 import (
+	"io"
 	"os"
-	"path/filepath"
 	"reflect"
 	"testing"
 
 	"github.com/anuchito/dbstore/pb"
 )
 
-func setup(t *testing.T) (string, func()) {
-	t.Parallel()
-	dir, err := os.MkdirTemp("", "dbstore")
-	if err != nil {
-		t.Fatalf("error creating temp dir: %v", err)
-	}
-	teardown := func() { os.RemoveAll(dir) }
-	return filepath.Join(dir, "testdb"), teardown
-}
-
-func setupFile(t *testing.T) (*os.File, func()) {
+func setupFile(t *testing.T) (io.ReadWriteSeeker, func()) {
 	t.Parallel()
 	f, err := os.CreateTemp("", "dbstore")
 	if err != nil {
@@ -230,3 +220,13 @@ func TestMultipleRecover(t *testing.T) {
 		t.Fatalf("expected %v, got %v", entity2, readEntity2)
 	}
 }
+
+//func setup(t *testing.T) (string, func()) {
+// 	t.Parallel()
+// 	dir, err := os.MkdirTemp("", "dbstore")
+// 	if err != nil {
+// 		t.Fatalf("error creating temp dir: %v", err)
+// 	}
+// 	teardown := func() { os.RemoveAll(dir) }
+// 	return filepath.Join(dir, "testdb"), teardown
+// }
