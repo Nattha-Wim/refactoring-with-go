@@ -163,6 +163,10 @@ func (db *DB) readPbData(lengthOf uint64) (*pb.Entity, error) {
 	return entity, nil
 }
 
+func (db *DB) Len() int {
+	return len(db.offsetMap)
+}
+
 // // NewDb return a new intialized Db
 // func NewDB(filename string) *DB {
 
